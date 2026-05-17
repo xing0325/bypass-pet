@@ -1,126 +1,127 @@
 # image-2 prompts — 28 frame-by-frame
 
-Read `codex/brief.md` first for the character bible and the two style guides. Each prompt below assumes you've internalized those rules; the prompts only call out the per-frame variations.
+Read `codex/brief.md` first for the character bibles (Jack the Narrator, Tyler Durden) and the lighting/palette rules. Each prompt below assumes you've internalized those rules; the prompts only call out the per-frame variations.
 
 All frames share these implicit requirements:
 - 128×128 pixels, PNG, fully transparent background outside the sprite silhouette
-- Subject: **奶龙** — chubby Chinese-cartoon yellow dragon, big head, short limbs, large eyes
-- Composition: subject centered, feet at approximately the same y-coordinate across frames in the same loop
+- Pixel-art aesthetic with visible pixel grain; not photoreal, not vector-smooth
+- Composition: subject centered, feet anchored at the same y-coordinate across frames within a loop
+- No real-actor likenesses — render the character's TRAITS, not a specific person's face
 
 If image-2 produces a frame with the wrong dimensions or an opaque background, downscale/composite to spec before saving. Filenames are strict — match exactly.
 
 ---
 
-## Phase 1A — accept_idle (8 frames, Van Gogh Starry Night style)
+## Phase 1A — accept_idle (8 frames, Jack the tired Narrator)
 
 **Shared style prompt (paste into all Phase 1A frames)**:
 
-> Van Gogh *Starry Night* style oil painting. Background: deep cobalt and cerulean blue swirling sky with thick visible impasto brushstrokes, a luminous golden-yellow moon glow at top-right, small bright yellow stars with halo rings, dark cypress-green accents. The entire image rendered with short curved comma-strokes, post-impressionist palette. Subject is rendered IN this style, painted with the same brushstroke language — not pasted on top. The yellow body has visible directional comma-strokes. Imperfect painted outline.
+> Pixel-art portrait, 128×128, transparent background. Subject is a tired insomniac office worker in his early 30s, average build with slightly hunched shoulders. Hair: short, mid-brown, neat but limp. Face: dark circles under the eyes, mild stubble, slightly sunken cheeks, mouth in a flat neutral line. Clothes: wrinkled white dress shirt, dark loosened tie hanging 2 inches lower than the collar, dark slacks. Lighting: cool fluorescent office light, slightly green-shifted shadows, low contrast. Desaturated palette — bone white, dusty beige, sage-gray, navy tie, brown hair, plum under-eye shadow. Visible pixel grain. No saturated red/yellow/orange. No glasses unless stated.
 
 **Per-frame additions**:
 
 ### `accept_idle_00.png`
-> Subject: 奶龙 (chubby yellow Chinese cartoon dragon, big head, short stubby limbs, large round eyes with white highlights) standing in neutral pose, mouth closed in a soft small smile, body leaning very slightly to its left, eyes open and gentle, looking forward.
+> Pose: standing slouched, weight evenly on both feet, arms hanging slightly inward at sides (or right hand loosely holding a beige paper coffee cup with a sip-lid). Eyes half-open and looking forward, mouth a flat line. This is the neutral baseline pose.
 
 ### `accept_idle_01.png`
-> Same pose as previous frame but inhaling — chest slightly expanded, body 2 pixels taller, mouth still closed, eyes open.
+> Same pose as previous frame, beginning a shallow breath in. Shoulders rise by 1 pixel. Eyes unchanged.
 
 ### `accept_idle_02.png`
-> Peak inhale — body at tallest, chest puffed, mouth still closed, eyes open, contemplative.
+> Peak inhale. Body posture 1 pixel taller than frame 00 but still hunched. Eyes still half-open.
 
 ### `accept_idle_03.png`
-> Starting to exhale, body relaxing, eyes half-closed (blink in progress, eyelids 50% down), mouth still in small smile.
+> Starting to exhale. Shoulders dropping back to baseline. Eyes drooping further — eyelids now at 60% closed.
 
 ### `accept_idle_04.png`
-> Eyes fully closed (peaceful blink frame), body neutral height, mouth small smile.
+> Maximum eye droop — eyelids at 90% closed, this is a fatigue-droop NOT a peaceful blink. Mouth still neutral. Body baseline pose. He looks like he might fall asleep standing up.
 
 ### `accept_idle_05.png`
-> Eyes 50% open (blink ending), body still relaxed, mouth small smile.
+> Eyes opening back to half-open. Head tilted 2 pixels to his left (the viewer's right). Mouth neutral.
 
 ### `accept_idle_06.png`
-> Mid-exhale, eyes fully open, body slightly shorter than neutral, looking forward.
+> Small yawn — mouth open 3-4 pixels wide showing a dark oval of mouth interior. Eyes squinting (eyelids 70% closed). Head tilted back by 1 pixel.
 
 ### `accept_idle_07.png`
-> Almost back to neutral, body leaning very slightly to its right (mirror of frame 00's lean), eyes open. This frame should loop seamlessly back to frame 00.
+> Yawn ending — mouth closing, almost back to neutral line. Eyes returning to half-open. Body returning to frame-00 pose. This frame should loop seamlessly back to frame 00.
 
 ---
 
-## Phase 1B — bypass_idle (8 frames, Russian Constructivism style)
+## Phase 1B — bypass_idle (8 frames, Tyler Durden)
 
 **Shared style prompt (paste into all Phase 1B frames)**:
 
-> Russian Constructivism propaganda poster style, El Lissitzky and Rodchenko aesthetic. Background: bold geometric blocks of pure revolutionary red `#D60E1E`, deep black `#0F0F12`, pure yellow `#FCD600`, and off-white `#E8E5D8` — no other colors permitted. Sharp diagonal composition, hard edges, no gradients, no anti-aliasing on the blocks. Stencil/sans-serif Cyrillic-flavored block letterforms can appear as background design fragments. Subject is rendered with the same hard-edged geometric block treatment — yellow body in same `#FCD600` as background blocks, bold flat outline.
+> Pixel-art portrait, 128×128, transparent background. Subject is a charismatic anarchist anti-hero in his early 30s with a lean wiry sculpted build, confident upright posture, weight on his right hip. Hair: peroxide-bleached blonde, longer than corporate, slightly disheveled, late-90s grunge. Face: sharp jawline, mild stubble, small white scar across the chin, smug crooked smirk, hooded knowing eyes. Clothes: red leather jacket open over a stained cream ribbed undershirt (or bare chest with sculpted abs, your choice — pick one and stay consistent across the 8 frames). Dark vintage suit pants or black jeans. Lighting: warm tungsten basement light, hard shadows with golden-orange tint, high contrast. Palette: blood red leather, oxblood shadows, black, dirty cream, peroxide yellow hair, warm-tan skin. Strict red-black-cream dominance. Visible pixel grain. A cigarette protrudes from the corner of his mouth in most frames.
 
 **Per-frame additions**:
 
 ### `bypass_idle_00.png`
-> Subject: 奶龙 (chubby yellow dragon) holding a stylized megaphone in its right stubby hand pointing up-right at 45°. Mouth half-open mid-shout. Left fist starting to rise to chest level. Standing on a diagonal red block. Background: bold black + yellow geometric blocks behind.
+> Pose: standing with weight on right hip, left hand in jacket pocket (or thumb hooked through belt loop), right hand at his side. Smug crooked smirk on the right side of his mouth. Unlit cigarette in the left corner of his mouth. Looking slightly off-camera toward the viewer's left, eyes hooded. This is the neutral swagger pose.
 
 ### `bypass_idle_01.png`
-> Same character, mouth opens wider, left fist rising to shoulder height. Megaphone still raised. Background blocks slightly shifted (a yellow diagonal sliver enters from the right).
+> Same pose, head tilts 2 pixels to his right (viewer's left), smirk widens by 1 pixel.
 
 ### `bypass_idle_02.png`
-> Mouth at maximum width, left fist at chest height pulled back, megaphone raised, head slightly forward. Background blocks darker on right side.
+> Taking a drag on the cigarette — cigarette tip glows hot orange-red (a 2-pixel bright orange dot). Eyes squint slightly with the inhale. Chest expands by 1 pixel.
 
 ### `bypass_idle_03.png`
-> Peak shout — head tilted slightly back, mouth fully open showing teeth/inside-mouth in `#D60E1E` red, left fist at face height in a strong pump, megaphone aimed up. Maximum action energy.
+> Head tilts back by 2 pixels as he exhales. Mouth opens slightly. Eyes hooded, looking up. Chest still expanded.
 
 ### `bypass_idle_04.png`
-> Easing from peak — mouth still wide but lowering, head returning forward, fist still raised but slightly relaxing.
+> Small puff of light gray smoke visible in front of his face (an irregular 3-pixel-wide cloud above the mouth). Head back to baseline. Smirk returning. Cigarette settled in mouth corner again.
 
 ### `bypass_idle_05.png`
-> Mouth partially closing, fist dropping toward chest. Body starting to reset.
+> Smug grin at maximum width. Right hand has come up to mid-chest level, holding the cigarette between index and middle fingers (cigarette now out of mouth in this frame). Eyes locked on viewer.
 
 ### `bypass_idle_06.png`
-> Smirk/sneer mid-frame — mouth small but cocky, fist near chest, megaphone slightly lowered. Smug interlude.
+> Small chuckle — chest puffs out by 1 extra pixel, head shake by 1 pixel to his left. Cigarette held at chest. A faint smile-line crease at the corner of his eye.
 
 ### `bypass_idle_07.png`
-> Almost back to start pose — mouth half-open ready to shout again, fist low, megaphone half-raised. This frame should loop seamlessly back to frame 00.
+> Back to baseline pose, cigarette returned to mouth corner, hand back at side, smug smirk reset. This frame should loop seamlessly back to frame 00.
 
 ---
 
-## Phase 2A — trans_to_bypass (6 frames, cross-fade from A to B)
+## Phase 2A — trans_to_bypass (6 frames, Jack → Tyler morph)
 
-This sequence breaks the Van Gogh world and bursts into the Constructivism world. Plays in 600 ms.
+This sequence is a dissociative split. Plays in 600 ms.
 
 ### `trans_to_bypass_00.png`
 > **DO NOT GENERATE — copy `accept_idle_00.png` verbatim.** Continuity start.
 
 ### `trans_to_bypass_01.png`
-> Van Gogh starry-night sky as in `accept_idle_00`, but thin glass-like cracks (white-and-cobalt jagged lines) appear across the sky background. The 奶龙 still in soft-smile pose, eyes wider with surprise. Style is still 95% Van Gogh.
+> Same composition as Jack idle pose but Jack's eyes widen slightly (eyelids open to 80%), as if he's just caught his reflection in a window. A faint blood-red glow halos the silhouette edge — only 1-2 pixels of red along his outline. Office lighting still cool overall.
 
 ### `trans_to_bypass_02.png`
-> Cracks widen into visible fissures. Sky behind the pet beginning to fragment into shards. The pet's mouth starting to open. Van Gogh swirls partially visible but interrupted by sharp angular gaps.
+> Mid-morph. Hair: brown roots with the tips beginning to lighten to peroxide-yellow (yellow ends, brown middle). Jawline sharpening — face shape narrowing by 1-2 pixels. Dress shirt collar coming undone — top button gone, collar splaying open. A hint of smirk emerging at the right corner of the mouth. Lighting warming up — shadows shifting from green-gray toward warm-tan.
 
 ### `trans_to_bypass_03.png`
-> Shards of starry sky flying outward from the center. Red and yellow Constructivism geometric blocks erupting from the cracks behind/beside the pet. The pet's mouth is opening mid-laugh, eyes shifting from soft to wild. The style is hybrid — half painted strokes, half hard-edged blocks.
+> Half-and-half split, vertically. Left half of the body still Jack (white dress shirt, brown hair, dark circles). Right half is becoming Tyler — red leather sleeve materialized over the right shoulder and arm, right side of the hair fully peroxide, right side of the face sharp-jawed and smirking. Eyes asymmetric — left eye still tired, right eye knowing.
 
 ### `trans_to_bypass_04.png`
-> Starry-night fragments mostly gone. Red, black, yellow blocks now fill 80% of the frame. A megaphone materializes in the pet's right hand (drawn with some lingering painted edges that are sharpening into hard outlines). Pet's expression is now nearly the Constructivism shout pose.
+> Tyler nearly formed. Red leather jacket fully on, hair fully peroxide-blonde, smirk landed, posture straightened. Only residual traces of Jack's dark circles still visible under the eyes. Cigarette not yet in mouth. Lighting warm tungsten.
 
 ### `trans_to_bypass_05.png`
 > **DO NOT GENERATE — copy `bypass_idle_00.png` verbatim.** Continuity end.
 
 ---
 
-## Phase 2B — trans_to_accept (6 frames, cross-fade from B to A)
+## Phase 2B — trans_to_accept (6 frames, Tyler → Jack morph)
 
-This sequence softens the propaganda poster back into a painting. Plays in 600 ms.
+The fantasy fades, the drone returns. Plays in 600 ms.
 
 ### `trans_to_accept_00.png`
 > **DO NOT GENERATE — copy `bypass_idle_00.png` verbatim.** Continuity start.
 
 ### `trans_to_accept_01.png`
-> Constructivism scene as in `bypass_idle_00`, but the hard edges of the geometric blocks begin to soften — edges slightly painterly. The megaphone starts to dissolve at its tip into faint brushstrokes. The pet's shouting mouth is closing slightly.
+> Tyler pose, but the smirk wavers — mouth shape less confident, eyes losing their hooded knowing quality. The cigarette in the mouth corner has gone out (no glow). Faint cool-gray edge starting at the silhouette outline.
 
 ### `trans_to_accept_02.png`
-> Geometric blocks dissolving into curved comma-shaped brushstrokes around the edges. Red is shifting toward warmer painted-red tones. Pet's expression is calming.
+> Leather jacket dissolving at the edges — sleeves and lapels showing pixel-level erosion / dithering as if turning to dust. Hair desaturating — peroxide yellow shifting toward darker brown at the roots. Posture starting to deflate — shoulders dropping by 1 pixel.
 
 ### `trans_to_accept_03.png`
-> Brushstrokes coalescing into a swirling sky pattern in the background. The remaining red blocks are now small painterly fragments. Megaphone almost gone. Yellow background block softening to a yellow Van Gogh moon glow forming.
+> Half-and-half. Right half of body still Tyler (red leather sleeve, peroxide right side of hair, smirk on right side). Left half is becoming Jack — white dress shirt sleeve, brown left side of hair, slumped shoulder, dark circle reappearing under the left eye.
 
 ### `trans_to_accept_04.png`
-> Starry sky 80% formed, just a few painted-red flecks left as residue. Pet's expression mostly calm, eyes returning to soft Van Gogh state. Style is 90% Van Gogh.
+> Jack nearly back. Dress shirt fully on with loosened tie, brown hair restored, dark circles forming under both eyes, posture deflated. Only residual peroxide tint at the very tips of the hair. Lighting cooled to office-fluorescent green-gray.
 
 ### `trans_to_accept_05.png`
 > **DO NOT GENERATE — copy `accept_idle_00.png` verbatim.** Continuity end.
