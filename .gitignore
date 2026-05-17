@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+.python-version
+
+# Editors
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Build
+build/
+dist/
+*.spec
+
+# Local state (sprite cache, user position memory)
+*.local.json
+state.json
+
+# Claude Code transient
+.claude/launch.json
