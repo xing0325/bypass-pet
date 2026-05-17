@@ -87,21 +87,23 @@
 ### 技术栈
 
 - Python ≥ 3.10
-- **PySide6** —— Qt for Python（透明窗口 + 动画播放）
-- **watchdog** —— 文件监听
+- **PySide6** —— Qt for Python（透明窗口 + 动画播放 + 文件监听）
 - Windows 10/11 ≥ 1903
 
 ### 模块切分
 
 ```
-src/
+src/bypass_pet/
+├── __init__.py
 ├── __main__.py          # python -m bypass_pet 入口
-├── app.py               # QApplication + 主窗口实例
-├── pet_window.py        # 透明无边窗、拖动、置顶、托盘菜单
-├── animator.py          # 帧序列加载 + 定时器播放 (待机循环 + 过场)
-├── state.py             # 哨兵文件读写 + 文件 watcher
+├── app.py               # QApplication + 主窗口实例 + QFileSystemWatcher
+├── pet_window.py        # 透明无边窗、拖动、置顶、右键菜单
+├── animator.py          # FrameSet + Animator（待机循环 + 过场）
+├── state.py             # SentinelState 读写
 └── config.py            # 资源路径、坐标记忆、常量
 ```
+
+> **文件监听**：用 Qt 自带的 `QFileSystemWatcher` 监听哨兵所在目录，所有信号都在主线程，避免跨线程同步成本。`watchdog` 在 spec 早期版本里提过，最终未采用。
 
 ### 数据流
 
@@ -189,7 +191,7 @@ bypass-pet/
 | Codex 出图质量参差不齐 | brief.md 写硬规则；个别帧返工 |
 | Image-2 拒绝真人化的演员脸 | brief 明确"render TRAITS not actor faces"；像素风天然抽象 |
 | PySide6 透明窗口在某些 Windows 11 主题下出现黑色背景 | 测试时用 `Qt.WA_NoSystemBackground`，必要时改用 `tkinter` + `wm_attributes` 兜底 |
-| watchdog 在 Windows 上偶发延迟 | 兜底 1s 轮询 |
+| 哨兵文件 watcher 与点击 toggle 同时触发，过场播两次 | 进入 begin_transition 前比对 (当前/目标) 状态，重复请求 no-op |
 | 28 帧一次出完工作量大 | 分两批：先 16 待机帧看效果，再 12 过场帧 |
 | 同人 / 改编 IP 风险 | 个人桌面工具、非商用、不公开传播改图；像素抽象后非演员脸 |
 
