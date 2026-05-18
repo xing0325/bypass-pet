@@ -18,7 +18,7 @@ from PySide6.QtGui import QColor, QFont, QPainter, QPen, QPixmap
 from .config import (
     IDLE_FRAME_COUNT,
     IDLE_FRAME_MS,
-    SPRITE_SIZE,
+    SPRITE_WIDTH, SPRITE_HEIGHT,
     TRANSITION_FRAME_COUNT,
     TRANSITION_FRAME_MS,
 )
@@ -58,10 +58,10 @@ class FrameSet:
         if path.is_file():
             pix = QPixmap(str(path))
             if not pix.isNull() and pix.width() > 0:
-                if pix.width() != SPRITE_SIZE or pix.height() != SPRITE_SIZE:
+                if pix.width() != SPRITE_WIDTH or pix.height() != SPRITE_HEIGHT:
                     pix = pix.scaled(
-                        SPRITE_SIZE,
-                        SPRITE_SIZE,
+                        SPRITE_WIDTH,
+                        SPRITE_HEIGHT,
                         Qt.IgnoreAspectRatio,
                         Qt.SmoothTransformation,
                     )
@@ -73,12 +73,12 @@ class FrameSet:
     @staticmethod
     def _make_placeholder(state: State, label: str) -> QPixmap:
         bg_hex, fg_hex = _PLACEHOLDER_PALETTE[state]
-        pix = QPixmap(SPRITE_SIZE, SPRITE_SIZE)
+        pix = QPixmap(SPRITE_WIDTH, SPRITE_HEIGHT)
         pix.fill(QColor(bg_hex))
         painter = QPainter(pix)
         painter.setRenderHint(QPainter.Antialiasing, False)
         painter.setPen(QPen(QColor(fg_hex), 2))
-        painter.drawRect(2, 2, SPRITE_SIZE - 4, SPRITE_SIZE - 4)
+        painter.drawRect(2, 2, SPRITE_WIDTH - 4, SPRITE_HEIGHT - 4)
         painter.setFont(QFont("Consolas", 12, QFont.Bold))
         painter.drawText(
             pix.rect().adjusted(6, 6, -6, -6),

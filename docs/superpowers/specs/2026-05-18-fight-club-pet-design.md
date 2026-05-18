@@ -27,28 +27,30 @@
 
 ### 风格参考（给 Codex）
 
-- accept 参考：Edward Norton 在 Fight Club 早期办公室戏的造型（不要追求像演员，要抓"失眠白领"的轮廓）
-- bypass 参考：Brad Pitt 的 Tyler 形象（不要追求像演员，要抓"红夹克漂白发"的轮廓）
-- 像素风：visible pixel grain at 128×128，不是 photoreal 也不是 vector smooth
+- accept 参考：Edward Norton 在 Fight Club (1999) 的 Narrator 造型，**像越准越好**
+- bypass 参考：Brad Pitt 在 Fight Club (1999) 的 Tyler Durden 造型，**像越准越好**
+- 像素风：modern pixel illustration（参考 Octopath Traveler / Hyper Light Drifter 的胸像）at 256×320，不是 photoreal 也不是 8-bit chunky
 
-### 不抄演员脸的约束
+### 演员肖像策略：要像
 
-- 描述特征（jawline、hair、scar、posture），不描述具体演员
-- 128×128 的像素颗粒度天然抽象了真人特征
-- 在 brief 里明确写"don't render real actor likenesses"
+- 个人桌面用，无 IP 商用问题
+- 描述特征 + 直接点名演员名字（"like Edward Norton"、"like Brad Pitt"）一起写进 prompt
+- 像素抽象本身就提供了"二创"的法律灰度，不需要额外 hedge
 
 ## 3. 尺寸与帧规格
 
-- **画布尺寸**：128×128 像素，PNG（含 alpha 通道）
-- **像素粒度**：可见像素颗粒感，但允许细节
+- **画布尺寸**：**256×320 像素（竖向）**，PNG（含 alpha 通道）。竖向是为了塞下镜子 + 底部水池 + 顶部烟雾外溢空间。
+- **像素粒度**：现代像素插画风（Octopath / Hyper Light Drifter 胸像档），不是 8-bit chunky 也不是 photoreal
+- **场景**：固定一个浴室镜子视角。镜子在画布中央偏上、薄金属边框、右上角一道发丝裂痕（伏笔暗示 Tyler 之前砸过）。镜下是水池边沿、水龙头、牙刷、香皂等小道具。所有 28 帧摄影机不动，只换"镜中是谁 + 灯光色温"。
+- **4th wall 设备**：Tyler 的手可以伸出镜面、越出 canvas **右边缘**；烟雾可以飘出 canvas **顶边**。Jack 不破墙。
 - **帧数清单**：
 
 | 用途 | 文件 | 帧数 |
 |---|---|---|
-| accept 待机循环（Jack 困倦呼吸 + 半呵欠） | `assets/accept_idle_00.png` ~ `accept_idle_07.png` | 8 |
-| bypass 待机循环（Tyler 抽烟 + 坏笑节奏） | `assets/bypass_idle_00.png` ~ `bypass_idle_07.png` | 8 |
-| accept → bypass 过场（Jack 镜中看到自己变成 Tyler） | `assets/trans_to_bypass_00.png` ~ `trans_to_bypass_05.png` | 6 |
-| bypass → accept 过场（Tyler 消散，Jack 回归） | `assets/trans_to_accept_00.png` ~ `trans_to_accept_05.png` | 6 |
+| accept 待机循环（Jack 在水池上方洗脸） | `assets/accept_idle_00.png` ~ `accept_idle_07.png` | 8 |
+| bypass 待机循环（Tyler 在镜中抽烟 + 一帧手伸出镜面） | `assets/bypass_idle_00.png` ~ `bypass_idle_07.png` | 8 |
+| accept → bypass 过场（镜中倒影变成 Tyler，Jack 惊愕） | `assets/trans_to_bypass_00.png` ~ `trans_to_bypass_05.png` | 6 |
+| bypass → accept 过场（Tyler 消散，Jack 倒影归来） | `assets/trans_to_accept_00.png` ~ `trans_to_accept_05.png` | 6 |
 | **总计** | | **28** |
 
 ### 动画时序
@@ -205,4 +207,9 @@ bypass-pet/
 - 表情包导出
 - 桌宠移动到屏幕边缘自动隐藏
 - Mac / Linux 支持（先 Windows-only）
-- 血腥 / 露点 / 真人脸（内容护栏）
+- 血腥 / 露点（内容护栏；但**演员肖像可以追求像，不 hedge**）
+
+## 12. 未来扩展（不在本期 spec 范围）
+
+- **皮肤切换**：B 方案"同一扇窗内外两态"作为可选 skin。实现路径：把 `assets/` 重构成 `assets/skin-mirror/` + `assets/skin-window/`，加配置项 / 右键菜单切换。本期不做。
+- 其它候选 skin 思路（编号沿用之前对话）：A 互助小组 + Tyler 窗外抽烟（异步双场景）、D 同一办公桌两态。

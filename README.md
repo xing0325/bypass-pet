@@ -2,12 +2,12 @@
 
 A pixel desktop pet for Windows that toggles Claude Code Desktop's permission bypass mode with a single click.
 
-- **accept mode**: **the Narrator** ("Jack") from *Fight Club* — exhausted office drone in a wrinkled white shirt and loosened tie, dark circles, slouched. Claude is asking permission.
-- **bypass mode**: **Tyler Durden** from *Fight Club* — red leather jacket, peroxide hair, smug smirk, cigarette in the corner of his mouth. Claude is running with `--dangerously-skip-permissions`.
+- **accept mode**: **the Narrator ("Jack")** from *Fight Club* — exhausted office drone splashing cold water on his face in a bathroom mirror. Claude is asking permission.
+- **bypass mode**: **Tyler Durden** — in the same mirror, peroxide-blonde, red leather jacket, cigarette in the mouth, sometimes reaching his hand out of the mirror toward the viewer. Claude is running with `--dangerously-skip-permissions`.
 
 Single click on the pet flips the state. The pet syncs from a sentinel file (`~/.claude/hooks/.bypass-on`) so it stays in sync with the existing `bypass.cmd` toggle and PreToolUse hook.
 
-> **Pivoted from 奶龙 to Fight Club on 2026-05-18.** If you find any 奶龙 / dragon references anywhere in this repo, they're stale — ignore them.
+> **History**: this project pivoted twice. Originally 奶龙 (2026-05-17), then Fight Club full-body (2026-05-18 morning), then **Fight Club mirror scene at 256×320, current** (2026-05-18 afternoon). Earlier versions are in git history. If you find any reference to 奶龙, full-body, or 128×128, treat it as stale.
 
 ---
 
@@ -16,8 +16,8 @@ Single click on the pet flips the state. The pet syncs from a sentinel file (`~/
 | | |
 |---|---|
 | Design spec | done — see [`docs/superpowers/specs/2026-05-18-fight-club-pet-design.md`](docs/superpowers/specs/2026-05-18-fight-club-pet-design.md) |
-| Sprite assets (28 PNGs) | **awaiting Codex** — see [`codex/brief.md`](codex/brief.md) |
-| Python source | not yet written |
+| Sprite assets (28 PNGs at 256×320) | **awaiting Codex (v2)** — see [`codex/brief.md`](codex/brief.md) |
+| Python source | done — runs with placeholder squares until Codex delivers art |
 
 ---
 
@@ -27,6 +27,20 @@ If you're Codex and the human handed you this repo: read [`codex/brief.md`](code
 
 You generate **art only**. Don't write Python.
 
+This is the **second pass**. The first attempt was full-body, which didn't read at sprite scale. The current design is a bathroom-mirror scene with bust framing at 256×320.
+
+---
+
+## Run it (placeholder version, while waiting for art)
+
+```powershell
+cd C:\Users\david\nailong-pet
+.\.venv\Scripts\Activate.ps1
+python -m bypass_pet
+```
+
+Pet appears in the bottom-right corner of the primary screen. Left-click to toggle. Right-click for menu. Drag to move.
+
 ---
 
 ## Repo layout
@@ -34,24 +48,30 @@ You generate **art only**. Don't write Python.
 ```
 bypass-pet/
 ├── README.md                                            # you are here
+├── pyproject.toml                                       # PySide6 dep + entry point
+├── src/bypass_pet/                                      # Python source
+│   ├── __main__.py
+│   ├── app.py                                           # QApplication + sentinel watcher
+│   ├── pet_window.py                                    # transparent frameless window
+│   ├── animator.py                                      # frame loader + idle/transition timer
+│   ├── state.py                                         # sentinel-file read/write
+│   └── config.py                                        # paths, sizes, timing
 ├── codex/
-│   ├── brief.md                                         # Codex's task spec (Jack/Tyler bibles, style rules)
+│   ├── brief.md                                         # Codex's task spec
 │   ├── prompts.md                                       # 28 frame-by-frame image-2 prompts
-│   └── style-reference/                                 # reference images (optional, can be empty)
-├── assets/                                              # Codex output: 28 PNGs at 128×128
+│   └── style-reference/                                 # reference images (optional)
+├── assets/                                              # Codex output: 28 PNGs at 256×320
 ├── docs/
 │   └── superpowers/specs/2026-05-18-fight-club-pet-design.md
-├── src/                                                 # Python source (later)
-└── tests/                                               # tests (later)
+└── tests/
+    └── test_state.py
 ```
 
 ---
 
-## Why this exists
+## Future
 
-Claude Code Desktop has [a bug](https://github.com/anthropics/claude-code/issues/29026) where `permissions.allow` and `defaultMode: bypassPermissions` in `settings.json` are ignored. The user worked around it with a `PreToolUse` hook that reads a sentinel file. The pet is a visual indicator + one-click toggle for that sentinel.
-
-The two characters from *Fight Club* (1999) are the same person seen from two sides: a tired conformist who asks permission, and a destructive alter-ego who does what he wants. That contrast maps directly onto the toggle.
+A second skin showing the **same window** with Jack inside leaning against the sill (rainy day) and Tyler leaning OUT of the window smoking (city night) is on the post-MVP wishlist. The current code hardcodes a single asset path; future work would refactor `assets/` to `assets/skin-mirror/` + `assets/skin-window/` and add a "switch skin" menu item.
 
 ---
 

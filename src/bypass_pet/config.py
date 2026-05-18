@@ -18,7 +18,8 @@ def state_dir() -> Path:
     return Path.home() / "AppData" / "Local" / "bypass-pet"
 
 
-SPRITE_SIZE = 128
+SPRITE_WIDTH = 256
+SPRITE_HEIGHT = 320
 IDLE_FRAME_COUNT = 8
 TRANSITION_FRAME_COUNT = 6
 IDLE_FRAME_MS = 250

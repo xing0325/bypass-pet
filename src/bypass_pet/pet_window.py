@@ -19,7 +19,8 @@ from .config import (
     DEFAULT_MARGIN_BOTTOM,
     DEFAULT_MARGIN_RIGHT,
     DRAG_THRESHOLD_PX,
-    SPRITE_SIZE,
+    SPRITE_HEIGHT,
+    SPRITE_WIDTH,
     TOOLTIP_ACCEPT,
     TOOLTIP_BYPASS,
 )
@@ -70,7 +71,7 @@ class PetWindow(QWidget):
         )
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setAttribute(Qt.WA_NoSystemBackground)
-        self.setFixedSize(SPRITE_SIZE, SPRITE_SIZE)
+        self.setFixedSize(SPRITE_WIDTH, SPRITE_HEIGHT)
         self.setWindowTitle("bypass-pet")
 
         self.animator.frame_changed.connect(self._on_frame)
@@ -89,8 +90,8 @@ class PetWindow(QWidget):
 
     def _place_default(self) -> None:
         screen = QGuiApplication.primaryScreen().availableGeometry()
-        x = screen.right() - SPRITE_SIZE - DEFAULT_MARGIN_RIGHT
-        y = screen.bottom() - SPRITE_SIZE - DEFAULT_MARGIN_BOTTOM
+        x = screen.right() - SPRITE_WIDTH - DEFAULT_MARGIN_RIGHT
+        y = screen.bottom() - SPRITE_HEIGHT - DEFAULT_MARGIN_BOTTOM
         self.move(x, y)
 
     # ------------------------------------------------------------------ rendering
