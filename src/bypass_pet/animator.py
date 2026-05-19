@@ -67,6 +67,9 @@ class FrameSet:
         self.missing.append(key)
         self._cache[key] = self._make_placeholder(kind, state, frame_idx)
 
+    BALL_SIZE = 96  # placeholder ball is smaller than the canvas so it
+                     # reads as a small floating sphere with breathing room
+
     @staticmethod
     def _make_placeholder(kind: str, state: State, frame_idx: int) -> QPixmap:
         pix = QPixmap(SPRITE_WIDTH, SPRITE_HEIGHT)
@@ -74,51 +77,37 @@ class FrameSet:
         painter = QPainter(pix)
         painter.setRenderHint(QPainter.Antialiasing, True)
 
-        # Ball geometry: largest inscribed square, centered vertically with
-        # a bit more breathing room above than below so the canvas's bottom
-        # third stays reserved for the future sink area.
-        side = min(SPRITE_WIDTH, SPRITE_HEIGHT) - 24
+        # Ball centered horizontally; nudged slightly above vertical center
+        # to leave room for the subtitle line beneath it.
+        side = FrameSet.BALL_SIZE
         ball_rect = QRect(
             (SPRITE_WIDTH - side) // 2,
-            (SPRITE_HEIGHT - side) // 2 - 8,
+            (SPRITE_HEIGHT - side) // 2 - 14,
             side,
             side,
         )
 
         if kind == "idle":
             bg_hex, fg_hex = _PLACEHOLDER_PALETTE[state]
-            FrameSet._paint_ball(painter, ball_rect, QColor(bg_hex), QColor(fg_hex))
-            FrameSet._paint_state_label(painter, ball_rect, state.upper(), QColor(fg_hex))
-            FrameSet._paint_caption(
-                painter,
-                ball_rect,
-                f"frame {frame_idx:02d}/{IDLE_FRAME_COUNT-1:02d}",
-                QColor(fg_hex),
-            )
+            bg, fg = QColor(bg_hex), QColor(fg_hex)
+            FrameSet._paint_ball(painter, ball_rect, bg, fg)
+            FrameSet._paint_main_label(painter, ball_rect, state.upper(), fg)
+            subtitle = "审批中" if state == "accept" else "裸奔中"
+            FrameSet._paint_subtitle(painter, ball_rect, subtitle, fg)
         else:  # transition
             prev_state: State = "accept" if state == "bypass" else "bypass"
             prev_bg, _ = _PLACEHOLDER_PALETTE[prev_state]
-            new_bg, new_fg = _PLACEHOLDER_PALETTE[state]
+            new_bg_hex, new_fg_hex = _PLACEHOLDER_PALETTE[state]
+            new_fg = QColor(new_fg_hex)
             FrameSet._paint_transition_ball(
                 painter,
                 ball_rect,
                 QColor(prev_bg),
-                QColor(new_bg),
-                QColor(new_fg),
+                QColor(new_bg_hex),
+                new_fg,
                 frame_idx,
             )
-            FrameSet._paint_state_label(
-                painter,
-                ball_rect,
-                f"→ {state.upper()}",
-                QColor(new_fg),
-            )
-            FrameSet._paint_caption(
-                painter,
-                ball_rect,
-                f"trans {frame_idx:02d}/{TRANSITION_FRAME_COUNT-1:02d}",
-                QColor(new_fg),
-            )
+            FrameSet._paint_main_label(painter, ball_rect, f"→ {state.upper()}", new_fg)
 
         painter.end()
         return pix
@@ -163,21 +152,17 @@ class FrameSet:
         painter.drawEllipse(rect)
 
     @staticmethod
-    def _paint_state_label(painter: QPainter, rect: QRect, text: str, color: QColor) -> None:
+    def _paint_main_label(painter: QPainter, ball_rect: QRect, text: str, color: QColor) -> None:
         painter.setPen(color)
-        # Roughly half the ball height — readable at 192×240 with breathing room.
-        painter.setFont(QFont("Segoe UI", 26, QFont.Bold))
-        # Lift the label a couple pixels above the ball's geometric center so
-        # the caption below it sits more comfortably.
-        label_rect = rect.adjusted(0, -6, 0, -6)
-        painter.drawText(label_rect, Qt.AlignCenter, text)
+        painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
+        painter.drawText(ball_rect, Qt.AlignCenter, text)
 
     @staticmethod
-    def _paint_caption(painter: QPainter, rect: QRect, text: str, color: QColor) -> None:
+    def _paint_subtitle(painter: QPainter, ball_rect: QRect, text: str, color: QColor) -> None:
         painter.setPen(color)
-        painter.setFont(QFont("Consolas", 9))
-        caption_rect = rect.adjusted(0, rect.height() // 2 + 4, 0, 0)
-        painter.drawText(caption_rect, Qt.AlignHCenter | Qt.AlignTop, text)
+        painter.setFont(QFont("Microsoft YaHei UI", 9, QFont.Bold))
+        subtitle_rect = QRect(0, ball_rect.bottom() + 6, SPRITE_WIDTH, 22)
+        painter.drawText(subtitle_rect, Qt.AlignHCenter | Qt.AlignTop, text)
 
     # ------------------------------------------------------------------ lookup
 
