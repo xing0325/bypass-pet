@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8">
+<title>bypass-pet · Codex 出图预览（v3 · 192×240 · 144 帧）</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root {
+    --bg: #0d0d10;
+    --bg-card: #16161c;
+    --bg-card-hover: #1f1f28;
+    --border: #2a2a35;
+    --text: #e8e6df;
+    --text-dim: #8d8b85;
+    --accent: #d4a01c;
+    --warn: #c4413a;
+    --good: #5fb35a;
+    --jack: #7A8475;
+    --tyler: #A11D1D;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  header {
+    padding: 24px 32px 12px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0;
+    background: rgba(13,13,16,.94);
+    z-index: 10;
+    backdrop-filter: blur(8px);
+  }
+  h1 { margin: 0 0 4px; font-size: 20px; letter-spacing: .02em; font-weight: 600; }
+  .sub { color: var(--text-dim); font-size: 12.5px; }
+  .nav { margin-top: 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .nav a {
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--bg-card); color: var(--text-dim);
+    border: 1px solid var(--border);
+    text-decoration: none; font-size: 12px;
+  }
+  .nav a:hover { color: var(--text); border-color: var(--accent); }
+  main { padding: 24px 32px 100px; max-width: 1500px; }
+  section { margin-top: 36px; scroll-margin-top: 110px; }
+  section h2 {
+    font-size: 14px; font-weight: 600; letter-spacing: .08em;
+    color: var(--accent); text-transform: uppercase;
+    margin: 0 0 12px; padding-bottom: 6px;
+    border-bottom: 1px dashed var(--border);
+  }
+  section h2 small {
+    color: var(--text-dim); font-weight: 400;
+    text-transform: none; letter-spacing: 0;
+    margin-left: 10px; font-size: 12px;
+  }
+
+  /* live demo */
+  .demo-row {
+    display: flex; gap: 32px; align-items: flex-start;
+    padding: 18px; background: var(--bg-card);
+    border: 1px solid var(--border); border-radius: 10px;
+  }
+  .demo-stage {
+    width: 192px; height: 240px;
+    background: #060608;
+    background-image: linear-gradient(45deg, #1a1a20 25%, transparent 25%),
+                       linear-gradient(-45deg, #1a1a20 25%, transparent 25%),
+                       linear-gradient(45deg, transparent 75%, #1a1a20 75%),
+                       linear-gradient(-45deg, transparent 75%, #1a1a20 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    image-rendering: pixelated;
+    border: 1px solid var(--border);
+    cursor: pointer; user-select: none;
+    flex-shrink: 0; position: relative;
+  }
+  .demo-stage img {
+    width: 100%; height: 100%;
+    image-rendering: pixelated;
+    display: block;
+  }
+  .demo-stage .badge {
+    position: absolute; top: 8px; left: 8px;
+    padding: 3px 8px; font-size: 11px;
+    background: rgba(15,15,18,.8); border: 1px solid var(--border);
+    border-radius: 4px; pointer-events: none;
+  }
+  .demo-info { flex: 1; min-width: 240px; }
+  .demo-info code {
+    background: #0a0a0d; padding: 2px 6px; border-radius: 4px;
+    font-family: ui-monospace, "Cascadia Code", monospace;
+    font-size: 12px; color: var(--accent);
+  }
+  .demo-info .hint { color: var(--text-dim); font-size: 13px; margin-top: 8px; }
+
+  /* loops side-by-side */
+  .loops {
+    display: grid; gap: 18px;
+    grid-template-columns: repeat(4, max-content);
+  }
+  .loop-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px;
+  }
+  .loop-card h3 {
+    margin: 0 0 8px; font-size: 12px; font-weight: 600;
+    color: var(--text-dim); letter-spacing: .04em;
+  }
+  .loop-card.accept h3 { color: var(--jack); }
+  .loop-card.bypass h3 { color: var(--tyler); }
+  .loop-stage {
+    width: 192px; height: 240px;
+    background: #060608;
+    background-image: linear-gradient(45deg, #1a1a20 25%, transparent 25%),
+                       linear-gradient(-45deg, #1a1a20 25%, transparent 25%),
+                       linear-gradient(45deg, transparent 75%, #1a1a20 75%),
+                       linear-gradient(-45deg, transparent 75%, #1a1a20 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+  }
+  .loop-stage img {
+    width: 100%; height: 100%; image-rendering: pixelated;
+    display: block;
+  }
+  .loop-card .meta {
+    margin-top: 8px; font-size: 11px; color: var(--text-dim);
+    font-family: ui-monospace, monospace;
+  }
+
+  /* grid view */
+  .grid {
+    display: grid; gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+  .frame {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px; text-align: center;
+  }
+  .frame img {
+    width: 100%; height: auto;
+    aspect-ratio: 192 / 240;
+    image-rendering: pixelated;
+    background-image: linear-gradient(45deg, #1a1a20 25%, transparent 25%),
+                       linear-gradient(-45deg, #1a1a20 25%, transparent 25%),
+                       linear-gradient(45deg, transparent 75%, #1a1a20 75%),
+                       linear-gradient(-45deg, transparent 75%, #1a1a20 75%);
+    background-size: 12px 12px;
+    background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+    border-radius: 3px;
+  }
+  .frame .fn {
+    font-family: ui-monospace, monospace; font-size: 10.5px;
+    color: var(--text-dim); margin-top: 6px; word-break: break-all;
+  }
+  .frame.bookend { border-color: var(--accent); }
+  .frame.bookend::before {
+    content: "bookend"; display: block;
+    font-size: 10px; color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  /* checklist */
+  .check {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 20px; margin-top: 20px;
+  }
+  .check h3 { margin: 0 0 10px; font-size: 14px; color: var(--accent); }
+  .check label {
+    display: flex; gap: 10px; padding: 4px 0;
+    font-size: 13px; cursor: pointer;
+  }
+  .check input[type=checkbox] {
+    accent-color: var(--accent);
+  }
+  .verdict {
+    margin-top: 20px; padding: 16px 20px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .verdict h3 { margin: 0 0 10px; font-size: 14px; color: var(--accent); }
+  .verdict .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .verdict button {
+    padding: 8px 14px; border-radius: 6px;
+    border: 1px solid var(--border); cursor: pointer;
+    font-size: 13px; font-weight: 600;
+    background: var(--bg-card); color: var(--text);
+  }
+  .verdict button.good { background: var(--good); color: #0a1a08; border-color: var(--good); }
+  .verdict button.warn { background: var(--accent); color: #1a1106; border-color: var(--accent); }
+  .verdict button.bad { background: var(--warn); color: #f8e6e4; border-color: var(--warn); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>bypass-pet · Codex 出图预览（v3 · 192×240 · 144 帧）</h1>
+  <div class="sub">60 idle @ 12 FPS · 12 transition @ 20 FPS · 浏览器自动判断哪些 PNG 在线、哪些还在等 Codex 出</div>
+  <nav class="nav">
+    <a href="#demo">🎮 实机模拟</a>
+    <a href="#loops">🔄 四个循环</a>
+    <a href="#all-accept">Jack 待机 8 帧</a>
+    <a href="#all-bypass">Tyler 待机 8 帧</a>
+    <a href="#all-trans-bypass">过场 → bypass</a>
+    <a href="#all-trans-accept">过场 → accept</a>
+    <a href="#verdict">🗳 决定</a>
+  </nav>
+</header>
+
+<main>
+
+<section id="demo">
+  <h2>实机模拟 <small>点方块切换；按 1/2/4 切换 1× / 2× / 4× 放大</small></h2>
+  <div class="demo-row">
+    <div class="demo-stage" id="demo-stage" onclick="demoClick()">
+      <img id="demo-img" src="assets/accept_idle_00.png" alt="">
+      <div class="badge" id="demo-badge">ACCEPT · idle</div>
+    </div>
+    <div class="demo-info">
+      <p><strong>这是桌宠跑起来后的实际行为</strong>，跟你装上 Python 后双击的效果一致：</p>
+      <ul>
+        <li>待机循环 <strong>60 帧</strong> @ 每帧 <code>83ms</code> (= 5 秒一圈，12 FPS)</li>
+        <li>点击 → <strong>12 帧</strong>过场 @ 每帧 <code>50ms</code> (= 0.6 秒，20 FPS) → 切到对端待机</li>
+        <li>过场首尾两帧 (<code>*_00</code> / <code>*_11</code>) 用的就是 idle 起始帧本身 → 无缝</li>
+      </ul>
+      <p class="hint">点方块 → 看 Tyler 出场。再点 → 看 Tyler 退回 Jack。<br>看不出哪帧是 idle / 哪帧是过场 = 衔接合格。</p>
+    </div>
+  </div>
+</section>
+
+<section id="loops">
+  <h2>四个循环并排 <small>同时看，对比两态视觉差 + 过场动力</small></h2>
+  <div class="loops" style="grid-template-columns: repeat(auto-fit, minmax(286px, max-content));">
+    <div class="loop-card accept">
+      <h3>accept_idle · Jack 洗脸（2s 循环）</h3>
+      <div class="loop-stage"><img id="loop-accept-idle" src="assets/accept_idle_00.png" alt=""></div>
+      <div class="meta">60 帧 @ 83ms (5s, 12 FPS)</div>
+    </div>
+    <div class="loop-card bypass">
+      <h3>bypass_idle · Tyler 抽烟 + 伸手（2s 循环）</h3>
+      <div class="loop-stage"><img id="loop-bypass-idle" src="assets/bypass_idle_00.png" alt=""></div>
+      <div class="meta">60 帧 @ 83ms (5s, 12 FPS)</div>
+    </div>
+    <div class="loop-card accept">
+      <h3>trans_to_bypass · Jack → Tyler（0.6s 单次循环演示）</h3>
+      <div class="loop-stage"><img id="loop-trans-bypass" src="assets/trans_to_bypass_00.png" alt=""></div>
+      <div class="meta">12 帧 @ 50ms (0.6s, 20 FPS)</div>
+    </div>
+    <div class="loop-card bypass">
+      <h3>trans_to_accept · Tyler → Jack（0.6s 单次循环演示）</h3>
+      <div class="loop-stage"><img id="loop-trans-accept" src="assets/trans_to_accept_00.png" alt=""></div>
+      <div class="meta">12 帧 @ 50ms (0.6s, 20 FPS)</div>
+    </div>
+  </div>
+</section>
+
+<section id="all-accept">
+  <h2>accept_idle · Jack 待机 60 帧（5s 循环 @ 12 FPS） <small>低头 → 抬头 → 眨眼 → 捧水 → 泼脸 → 滴水</small></h2>
+  <div class="grid" id="grid-accept-idle"></div>
+</section>
+
+<section id="all-bypass">
+  <h2>bypass_idle · Tyler 待机 60 帧（5s 循环 @ 12 FPS） <small>笑 → 歪头 → 点烟 → 抽 → 吐烟越顶 → 笑 → 手越右边 → 收回</small></h2>
+  <div class="grid" id="grid-bypass-idle"></div>
+</section>
+
+<section id="all-trans-bypass">
+  <h2>trans_to_bypass · Jack 镜中变 Tyler 12 帧（0.6s @ 20 FPS） <small>抬头 → 头发金 → 半边脸 → 几乎成型 → bookend</small></h2>
+  <div class="grid" id="grid-trans-bypass"></div>
+</section>
+
+<section id="all-trans-accept">
+  <h2>trans_to_accept · Tyler 消散回 Jack 12 帧（0.6s @ 20 FPS） <small>笑垮 → 头发褪色 → 半边脸 → 残留烟雾 → bookend</small></h2>
+  <div class="grid" id="grid-trans-accept"></div>
+</section>
+
+<section id="verdict">
+  <h2>你的决定</h2>
+
+  <div class="check">
+    <h3>勾一勾过了哪些（v3 等 Codex 出图后用）</h3>
+    <label><input type="checkbox"> 全 144 张文件齐全</label>
+    <label><input type="checkbox"> 全部 192×240 PNG with alpha</label>
+    <label><input type="checkbox"> 4 个 bookend 帧字节级一致 (00 / 11 trans = 对应 idle)</label>
+    <label><input type="checkbox"> Tyler 烟雾越出 canvas 顶边（bypass_idle_24~29 之一）</label>
+    <label><input type="checkbox"> Tyler 手越出 canvas 右边（bypass_idle_42~47 之一）</label>
+    <label><input type="checkbox"> Jack 看起来够"失眠白领文员" —— 不是健身教练 / 模特</label>
+    <label><input type="checkbox"> Tyler 看起来够"红夹克漂金发邪魅" —— 不是普通 90 年代摇滚青年</label>
+    <label><input type="checkbox"> Jack 和 v2 (PR #2) 角色长相一致（同一人）</label>
+    <label><input type="checkbox"> Tyler 和 v2 (PR #2) 角色长相一致（同一人）</label>
+    <label><input type="checkbox"> Jack ↔ Tyler 视觉对比够强烈（冷绿光 vs 暖红光）</label>
+    <label><input type="checkbox"> 待机 60 帧节奏舒服（5s 一圈不慌、不抽搐）</label>
+    <label><input type="checkbox"> 待机循环 00 ↔ 59 衔接无明显跳变</label>
+    <label><input type="checkbox"> 过场 12 帧半脸过渡（trans_*_05 / _06）流畅</label>
+  </div>
+
+  <div class="verdict">
+    <h3>三选一</h3>
+    <p>选定后告诉 Claude，他帮你执行。</p>
+    <div class="btns">
+      <button class="good" onclick="copyVerdict('合并 PR')">✓ 合 PR · 28 张全收</button>
+      <button class="warn" onclick="copyVerdict('合并 PR 但有几帧要重画')">~ 合 PR 但有几张要返工 →（在这里写哪几张）</button>
+      <button class="bad" onclick="copyVerdict('关 PR，换方向')">✗ 关 PR · 换方向 / 整套重来</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// v3 (2026-05-19): 60-frame idle + 12-frame transition
+const IDLE_N = 60, TRANS_N = 12, IDLE_MS = 83, TRANS_MS = 50;
+const accept_idle = Array.from({length: IDLE_N}, (_,i) => `assets/accept_idle_${String(i).padStart(2,'0')}.png`);
+const bypass_idle = Array.from({length: IDLE_N}, (_,i) => `assets/bypass_idle_${String(i).padStart(2,'0')}.png`);
+const trans_to_bypass = Array.from({length: TRANS_N}, (_,i) => `assets/trans_to_bypass_${String(i).padStart(2,'0')}.png`);
+const trans_to_accept = Array.from({length: TRANS_N}, (_,i) => `assets/trans_to_accept_${String(i).padStart(2,'0')}.png`);
+
+// ---- grid views ----
+function fillGrid(elId, files, bookendIdx = []) {
+  const el = document.getElementById(elId);
+  files.forEach((src, i) => {
+    const div = document.createElement("div");
+    div.className = "frame" + (bookendIdx.includes(i) ? " bookend" : "");
+    div.innerHTML = `<img src="${src}" alt=""><div class="fn">${src.split('/').pop()}</div>`;
+    el.appendChild(div);
+  });
+}
+fillGrid("grid-accept-idle", accept_idle);
+fillGrid("grid-bypass-idle", bypass_idle);
+fillGrid("grid-trans-bypass", trans_to_bypass, [0, TRANS_N - 1]);
+fillGrid("grid-trans-accept", trans_to_accept, [0, TRANS_N - 1]);
+
+// ---- side-by-side loops ----
+function startLoop(imgId, files, ms) {
+  const el = document.getElementById(imgId);
+  let i = 0;
+  setInterval(() => {
+    i = (i + 1) % files.length;
+    el.src = files[i];
+  }, ms);
+}
+startLoop("loop-accept-idle", accept_idle, IDLE_MS);
+startLoop("loop-bypass-idle", bypass_idle, IDLE_MS);
+startLoop("loop-trans-bypass", trans_to_bypass, TRANS_MS);
+startLoop("loop-trans-accept", trans_to_accept, TRANS_MS);
+
+// ---- live demo state machine (mirrors src/bypass_pet/animator.py) ----
+const demoImg = document.getElementById("demo-img");
+const demoBadge = document.getElementById("demo-badge");
+const demoStage = document.getElementById("demo-stage");
+
+let state = "accept";      // current settled state
+let target = "accept";     // where we're headed if mid-transition
+let mode = "idle";         // "idle" | "transition"
+let idx = 0;
+let timerId = null;
+
+function setBadge() {
+  if (mode === "transition") {
+    demoBadge.textContent = `→ ${target.toUpperCase()} · transition ${idx}/${TRANS_N - 1}`;
+  } else {
+    demoBadge.textContent = `${state.toUpperCase()} · idle ${idx}/${IDLE_N - 1}`;
+  }
+}
+
+function startIdle() {
+  mode = "idle"; idx = 0;
+  demoImg.src = state === "accept" ? accept_idle[0] : bypass_idle[0];
+  setBadge();
+  clearInterval(timerId);
+  timerId = setInterval(() => {
+    idx = (idx + 1) % IDLE_N;
+    demoImg.src = state === "accept" ? accept_idle[idx] : bypass_idle[idx];
+    setBadge();
+  }, IDLE_MS);
+}
+function beginTransition(toState) {
+  if (toState === state && mode === "idle") return;
+  target = toState; mode = "transition"; idx = 0;
+  const seq = target === "bypass" ? trans_to_bypass : trans_to_accept;
+  demoImg.src = seq[0];
+  setBadge();
+  clearInterval(timerId);
+  timerId = setInterval(() => {
+    idx += 1;
+    if (idx >= TRANS_N) {
+      state = target;
+      startIdle();
+      return;
+    }
+    demoImg.src = seq[idx];
+    setBadge();
+  }, TRANS_MS);
+}
+function demoClick() {
+  beginTransition(state === "accept" ? "bypass" : "accept");
+}
+document.addEventListener("keydown", (e) => {
+  if (e.key === "1") demoStage.style.transform = "scale(1)";
+  if (e.key === "2") demoStage.style.transform = "scale(2)";
+  if (e.key === "4") demoStage.style.transform = "scale(4)";
+  if (e.key === "1" || e.key === "2" || e.key === "4") {
+    demoStage.style.transformOrigin = "top left";
+  }
+});
+startIdle();
+
+function copyVerdict(label) {
+  navigator.clipboard.writeText(label).then(
+    () => alert(`已复制：${label}\n\n回到 Claude 粘贴。`),
+    () => prompt("手动复制：", label)
+  );
+}
+</script>
+</body>
+</html>

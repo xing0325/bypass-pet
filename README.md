@@ -7,7 +7,7 @@ A pixel desktop pet for Windows that toggles Claude Code Desktop's permission by
 
 Single click on the pet flips the state. The pet syncs from a sentinel file (`~/.claude/hooks/.bypass-on`) so it stays in sync with the existing `bypass.cmd` toggle and PreToolUse hook.
 
-> **History**: this project pivoted twice. Originally 奶龙 (2026-05-17), then Fight Club full-body (2026-05-18 morning), then **Fight Club mirror scene at 256×320, current** (2026-05-18 afternoon). Earlier versions are in git history. If you find any reference to 奶龙, full-body, or 128×128, treat it as stale.
+> **History**: this project pivoted three times. (1) 奶龙 (2026-05-17), (2) Fight Club full-body @ 128×128 (2026-05-18 morning), (3) Fight Club mirror scene @ 256×320 / 28 frames (2026-05-18 afternoon, see PR #2 + branch `codex/generate-mirror-sprite-assets`), **(4) current: Fight Club mirror @ 192×240 / 144 frames @ 12 FPS idle / 20 FPS transition (2026-05-19)**. The v3 (PR #2) art is preserved on its branch as a reference for character + scene continuity but is not directly used. If you find any reference to 奶龙 / full-body / 128 / 256×320 / 28-frame in this repo, treat as stale.
 
 ---
 
@@ -16,7 +16,7 @@ Single click on the pet flips the state. The pet syncs from a sentinel file (`~/
 | | |
 |---|---|
 | Design spec | done — see [`docs/superpowers/specs/2026-05-18-fight-club-pet-design.md`](docs/superpowers/specs/2026-05-18-fight-club-pet-design.md) |
-| Sprite assets (28 PNGs at 256×320) | **awaiting Codex (v2)** — see [`codex/brief.md`](codex/brief.md) |
+| Sprite assets (144 PNGs at 192×240) | **awaiting Codex (v3)** — see [`codex/brief.md`](codex/brief.md). v2 reference art is on branch `codex/generate-mirror-sprite-assets`. |
 | Python source | done — runs with placeholder squares until Codex delivers art |
 
 ---

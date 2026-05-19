@@ -18,12 +18,12 @@ def state_dir() -> Path:
     return Path.home() / "AppData" / "Local" / "bypass-pet"
 
 
-SPRITE_WIDTH = 256
-SPRITE_HEIGHT = 320
-IDLE_FRAME_COUNT = 8
-TRANSITION_FRAME_COUNT = 6
-IDLE_FRAME_MS = 250
-TRANSITION_FRAME_MS = 100
+SPRITE_WIDTH = 192
+SPRITE_HEIGHT = 240
+IDLE_FRAME_COUNT = 60         # 12 fps × 5 s = 60 frames
+TRANSITION_FRAME_COUNT = 12   # 20 fps × 0.6 s = 12 frames
+IDLE_FRAME_MS = 83            # 1000 / 12 ≈ 83
+TRANSITION_FRAME_MS = 50      # 1000 / 20 = 50
 DRAG_THRESHOLD_PX = 6
 
 # Distance from the screen's available-geometry edges when placing the pet

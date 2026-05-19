@@ -37,27 +37,40 @@
 - 描述特征 + 直接点名演员名字（"like Edward Norton"、"like Brad Pitt"）一起写进 prompt
 - 像素抽象本身就提供了"二创"的法律灰度，不需要额外 hedge
 
-## 3. 尺寸与帧规格
+## 3. 尺寸与帧规格（v3 · 2026-05-19）
 
-- **画布尺寸**：**256×320 像素（竖向）**，PNG（含 alpha 通道）。竖向是为了塞下镜子 + 底部水池 + 顶部烟雾外溢空间。
+- **画布尺寸**：**192×240 像素（竖向）**，PNG（含 alpha 通道）。从 256×320 缩到 192×240（约 5×6.4 cm，便利贴大小），更不占桌面。
 - **像素粒度**：现代像素插画风（Octopath / Hyper Light Drifter 胸像档），不是 8-bit chunky 也不是 photoreal
-- **场景**：固定一个浴室镜子视角。镜子在画布中央偏上、薄金属边框、右上角一道发丝裂痕（伏笔暗示 Tyler 之前砸过）。镜下是水池边沿、水龙头、牙刷、香皂等小道具。所有 28 帧摄影机不动，只换"镜中是谁 + 灯光色温"。
+- **场景**：固定一个浴室镜子视角。镜子在画布中央偏上、薄金属边框、右上角一道发丝裂痕（伏笔暗示 Tyler 之前砸过）。镜下是水池边沿、水龙头、牙刷、香皂等小道具。所有 144 帧摄影机不动，只换"镜中是谁 + 灯光色温 + 角色动作"。
 - **4th wall 设备**：Tyler 的手可以伸出镜面、越出 canvas **右边缘**；烟雾可以飘出 canvas **顶边**。Jack 不破墙。
 - **帧数清单**：
 
 | 用途 | 文件 | 帧数 |
 |---|---|---|
-| accept 待机循环（Jack 在水池上方洗脸） | `assets/accept_idle_00.png` ~ `accept_idle_07.png` | 8 |
-| bypass 待机循环（Tyler 在镜中抽烟 + 一帧手伸出镜面） | `assets/bypass_idle_00.png` ~ `bypass_idle_07.png` | 8 |
-| accept → bypass 过场（镜中倒影变成 Tyler，Jack 惊愕） | `assets/trans_to_bypass_00.png` ~ `trans_to_bypass_05.png` | 6 |
-| bypass → accept 过场（Tyler 消散，Jack 倒影归来） | `assets/trans_to_accept_00.png` ~ `trans_to_accept_05.png` | 6 |
-| **总计** | | **28** |
+| accept 待机循环（Jack 在水池上方洗脸，5 s 一圈） | `assets/accept_idle_00.png` ~ `accept_idle_59.png` | 60 |
+| bypass 待机循环（Tyler 在镜中抽烟 + 手探出镜面，5 s 一圈） | `assets/bypass_idle_00.png` ~ `bypass_idle_59.png` | 60 |
+| accept → bypass 过场（镜中倒影变成 Tyler，Jack 惊愕） | `assets/trans_to_bypass_00.png` ~ `trans_to_bypass_11.png` | 12 |
+| bypass → accept 过场（Tyler 消散，Jack 倒影归来） | `assets/trans_to_accept_00.png` ~ `trans_to_accept_11.png` | 12 |
+| **总计** | | **144** |
 
-### 动画时序
+### 动画时序（v3）
 
-- **待机循环**：每帧 250 ms，单循环 2 s，无限循环
-- **过场**：每帧 100 ms，单次播放 0.6 s
+- **待机循环**：每帧 **83 ms** (= 12 FPS)，单循环 **5 s**，无限循环
+- **过场**：每帧 **50 ms** (= 20 FPS)，单次播放 **0.6 s**（刻意快，避免切换迟钝感）
 - **触发**：左键点击 → 切换哨兵文件 → 播放过场 → 切到对端待机循环
+
+### v2 → v3 变化说明
+
+| 项 | v2（PR #2，2026-05-18） | v3（本档，2026-05-19） |
+|---|---|---|
+| 画布 | 256×320 | **192×240** |
+| idle 帧数 / 时长 | 8 / 2s | **60 / 5s** |
+| idle FPS | 4 | **12** |
+| trans 帧数 / 时长 | 6 / 0.6s | **12 / 0.6s** |
+| trans FPS | 10 | **20** |
+| 总帧数 | 28 | **144** |
+
+PR #2 的 v2 出图（256×320 / 28 帧）**因尺寸不匹配无法直接使用**，但**作为角色长相 + 浴室布局的视觉参考保留**在 `codex/generate-mirror-sprite-assets` 分支。v3 Codex 应当先看那分支的 28 张图确认形象一致性，再按 v3 规格出 144 张新图。
 
 ## 4. 桌面行为
 
