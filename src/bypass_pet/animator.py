@@ -1,8 +1,9 @@
 """Frame loading + idle/transition playback.
 
-FrameSet caches all 28 sprite frames at startup, falling back to obvious
+FrameSet caches all sprite frames at startup, falling back to ball-shaped
 placeholder pixmaps when a real PNG isn't yet on disk. This lets the pet
-boot and demonstrate full behavior before Codex has delivered the art.
+boot, look like a floating ball with a state label, and be obviously
+toggleable before Codex has delivered the art.
 
 Animator owns a QTimer and emits frame_changed signals at the right cadence
 for either an infinite idle loop or a one-shot transition.
@@ -12,29 +13,29 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PySide6.QtCore import QObject, QTimer, Qt, Signal
+from PySide6.QtCore import QObject, QRect, QTimer, Qt, Signal
 from PySide6.QtGui import QColor, QFont, QPainter, QPen, QPixmap
 
 from .config import (
     IDLE_FRAME_COUNT,
     IDLE_FRAME_MS,
-    SPRITE_WIDTH, SPRITE_HEIGHT,
+    SPRITE_HEIGHT,
+    SPRITE_WIDTH,
     TRANSITION_FRAME_COUNT,
     TRANSITION_FRAME_MS,
 )
 from .state import State
 
-# Per-state palette swatches for placeholder rendering. Matches the moods
-# from codex/brief.md: cool office green-gray for Jack, warm oxblood for
-# Tyler.
+# Per-state palette for placeholder rendering. Mood matches codex/brief.md:
+# cool sage-green for Jack ("accept"), warm oxblood-red for Tyler ("bypass").
 _PLACEHOLDER_PALETTE: dict[State, tuple[str, str]] = {
-    "accept": ("#7A8475", "#E8E2D5"),  # bg, fg
-    "bypass": ("#A11D1D", "#FCD600"),
+    "accept": ("#5b6b5e", "#e8e2d5"),   # bg fill, fg text+border
+    "bypass": ("#a11d1d", "#fcd600"),
 }
 
 
 class FrameSet:
-    """Loads sprite frames from disk; substitutes placeholders for any missing."""
+    """Loads sprite frames from disk; substitutes ball placeholders for any missing."""
 
     def __init__(self, assets_dir: Path) -> None:
         self.assets_dir = assets_dir
@@ -45,15 +46,11 @@ class FrameSet:
     def _load_all(self) -> None:
         for state in ("accept", "bypass"):
             for i in range(IDLE_FRAME_COUNT):
-                self._populate(f"{state}_idle_{i:02d}", state, f"{state}\nidle {i}")
+                self._populate(f"{state}_idle_{i:02d}", state, "idle", i)
             for i in range(TRANSITION_FRAME_COUNT):
-                self._populate(
-                    f"trans_to_{state}_{i:02d}",
-                    state,
-                    f"-> {state}\n{i}",
-                )
+                self._populate(f"trans_to_{state}_{i:02d}", state, "transition", i)
 
-    def _populate(self, key: str, state: State, label: str) -> None:
+    def _populate(self, key: str, state: State, kind: str, frame_idx: int) -> None:
         path = self.assets_dir / f"{key}.png"
         if path.is_file():
             pix = QPixmap(str(path))
@@ -68,25 +65,121 @@ class FrameSet:
                 self._cache[key] = pix
                 return
         self.missing.append(key)
-        self._cache[key] = self._make_placeholder(state, label)
+        self._cache[key] = self._make_placeholder(kind, state, frame_idx)
 
     @staticmethod
-    def _make_placeholder(state: State, label: str) -> QPixmap:
-        bg_hex, fg_hex = _PLACEHOLDER_PALETTE[state]
+    def _make_placeholder(kind: str, state: State, frame_idx: int) -> QPixmap:
         pix = QPixmap(SPRITE_WIDTH, SPRITE_HEIGHT)
-        pix.fill(QColor(bg_hex))
+        pix.fill(Qt.transparent)
         painter = QPainter(pix)
-        painter.setRenderHint(QPainter.Antialiasing, False)
-        painter.setPen(QPen(QColor(fg_hex), 2))
-        painter.drawRect(2, 2, SPRITE_WIDTH - 4, SPRITE_HEIGHT - 4)
-        painter.setFont(QFont("Consolas", 12, QFont.Bold))
-        painter.drawText(
-            pix.rect().adjusted(6, 6, -6, -6),
-            Qt.AlignCenter | Qt.TextWordWrap,
-            label,
+        painter.setRenderHint(QPainter.Antialiasing, True)
+
+        # Ball geometry: largest inscribed square, centered vertically with
+        # a bit more breathing room above than below so the canvas's bottom
+        # third stays reserved for the future sink area.
+        side = min(SPRITE_WIDTH, SPRITE_HEIGHT) - 24
+        ball_rect = QRect(
+            (SPRITE_WIDTH - side) // 2,
+            (SPRITE_HEIGHT - side) // 2 - 8,
+            side,
+            side,
         )
+
+        if kind == "idle":
+            bg_hex, fg_hex = _PLACEHOLDER_PALETTE[state]
+            FrameSet._paint_ball(painter, ball_rect, QColor(bg_hex), QColor(fg_hex))
+            FrameSet._paint_state_label(painter, ball_rect, state.upper(), QColor(fg_hex))
+            FrameSet._paint_caption(
+                painter,
+                ball_rect,
+                f"frame {frame_idx:02d}/{IDLE_FRAME_COUNT-1:02d}",
+                QColor(fg_hex),
+            )
+        else:  # transition
+            prev_state: State = "accept" if state == "bypass" else "bypass"
+            prev_bg, _ = _PLACEHOLDER_PALETTE[prev_state]
+            new_bg, new_fg = _PLACEHOLDER_PALETTE[state]
+            FrameSet._paint_transition_ball(
+                painter,
+                ball_rect,
+                QColor(prev_bg),
+                QColor(new_bg),
+                QColor(new_fg),
+                frame_idx,
+            )
+            FrameSet._paint_state_label(
+                painter,
+                ball_rect,
+                f"→ {state.upper()}",
+                QColor(new_fg),
+            )
+            FrameSet._paint_caption(
+                painter,
+                ball_rect,
+                f"trans {frame_idx:02d}/{TRANSITION_FRAME_COUNT-1:02d}",
+                QColor(new_fg),
+            )
+
         painter.end()
         return pix
+
+    # ------------------------------------------------------------------ paint helpers
+
+    @staticmethod
+    def _paint_ball(painter: QPainter, rect: QRect, fill: QColor, border: QColor) -> None:
+        painter.setBrush(fill)
+        painter.setPen(QPen(border, 3))
+        painter.drawEllipse(rect)
+
+    @staticmethod
+    def _paint_transition_ball(
+        painter: QPainter,
+        rect: QRect,
+        prev_fill: QColor,
+        new_fill: QColor,
+        border: QColor,
+        frame_idx: int,
+    ) -> None:
+        # Left-to-right wipe: progress 0..1 paints the new state's color
+        # over the previous state, sweeping from the ball's left edge to
+        # its right. Echoes the half-and-half split that the actual Codex
+        # transition art uses around frame 5-6.
+        progress = frame_idx / max(TRANSITION_FRAME_COUNT - 1, 1)
+        wipe_x = rect.left() + int(progress * rect.width())
+
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(prev_fill)
+        painter.drawEllipse(rect)
+
+        if wipe_x > rect.left():
+            painter.save()
+            painter.setClipRect(rect.left(), rect.top(), wipe_x - rect.left(), rect.height())
+            painter.setBrush(new_fill)
+            painter.drawEllipse(rect)
+            painter.restore()
+
+        painter.setBrush(Qt.NoBrush)
+        painter.setPen(QPen(border, 3))
+        painter.drawEllipse(rect)
+
+    @staticmethod
+    def _paint_state_label(painter: QPainter, rect: QRect, text: str, color: QColor) -> None:
+        painter.setPen(color)
+        # Roughly half the ball height — readable at 192×240 with breathing room.
+        painter.setFont(QFont("Segoe UI", 26, QFont.Bold))
+        # Lift the label a couple pixels above the ball's geometric center so
+        # the caption below it sits more comfortably.
+        label_rect = rect.adjusted(0, -6, 0, -6)
+        painter.drawText(label_rect, Qt.AlignCenter, text)
+
+    @staticmethod
+    def _paint_caption(painter: QPainter, rect: QRect, text: str, color: QColor) -> None:
+        painter.setPen(color)
+        painter.setFont(QFont("Consolas", 9))
+        caption_rect = rect.adjusted(0, rect.height() // 2 + 4, 0, 0)
+        painter.drawText(caption_rect, Qt.AlignHCenter | Qt.AlignTop, text)
+
+    # ------------------------------------------------------------------ lookup
 
     def idle(self, state: State, frame: int) -> QPixmap:
         return self._cache[f"{state}_idle_{frame:02d}"]
@@ -138,7 +231,6 @@ class Animator(QObject):
             self._idx %= IDLE_FRAME_COUNT
             self.frame_changed.emit(self.frames.idle(self.state, self._idx))
             return
-        # transition
         if self._idx >= TRANSITION_FRAME_COUNT:
             self.state = self.target_state
             self._start_idle()
