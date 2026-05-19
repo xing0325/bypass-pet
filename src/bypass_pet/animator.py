@@ -67,7 +67,7 @@ class FrameSet:
         self.missing.append(key)
         self._cache[key] = self._make_placeholder(kind, state, frame_idx)
 
-    BALL_SIZE = 96  # placeholder ball is smaller than the canvas so it
+    BALL_SIZE = 72   # placeholder ball is smaller than the canvas so it
                      # reads as a small floating sphere with breathing room
 
     @staticmethod
@@ -154,7 +154,7 @@ class FrameSet:
     @staticmethod
     def _paint_main_label(painter: QPainter, ball_rect: QRect, text: str, color: QColor) -> None:
         painter.setPen(color)
-        painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
+        painter.setFont(QFont("Segoe UI", 10, QFont.Bold))
         painter.drawText(ball_rect, Qt.AlignCenter, text)
 
     @staticmethod
