@@ -7,6 +7,8 @@ A pixel desktop pet for Windows that toggles Claude Code Desktop's permission by
 
 Single click on the pet flips the state. The pet syncs from a sentinel file (`~/.claude/hooks/.bypass-on`) so it stays in sync with the existing `bypass.cmd` toggle and PreToolUse hook.
 
+> **Heads up**: the pet is the visual layer; the actual auto-approve mechanism lives in the [**claude-bypass-hook**](https://github.com/xing0325/claude-bypass-hook) repo. Install that first (`powershell scripts\install.ps1` in that repo) — without the hook, this pet is just a colored ball that clicks do nothing useful with.
+
 > **History**: this project pivoted three times. (1) 奶龙 (2026-05-17), (2) Fight Club full-body @ 128×128 (2026-05-18 morning), (3) Fight Club mirror scene @ 256×320 / 28 frames (2026-05-18 afternoon, see PR #2 + branch `codex/generate-mirror-sprite-assets`), **(4) current: Fight Club mirror @ 192×240 / 144 frames @ 12 FPS idle / 20 FPS transition (2026-05-19)**. The v3 (PR #2) art is preserved on its branch as a reference for character + scene continuity but is not directly used. If you find any reference to 奶龙 / full-body / 128 / 256×320 / 28-frame in this repo, treat as stale.
 
 ---
